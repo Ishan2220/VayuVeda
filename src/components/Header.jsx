@@ -9,6 +9,7 @@ const Header = () => {
           <span className="tagline">Clean Air, Healthy Life</span>
         </div>
         <nav className="nav">
+          <a href="#about">Dashboard</a>
           <a href="#about">About</a>
         </nav>
       </div>

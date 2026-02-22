@@ -33,7 +33,7 @@ function App() {
 
   const handleLocationAQI = async () => {
     if (!location) return;
-    
+
     setLoading(true);
     try {
       const data = await fetchAQIData(location.lat, location.lon);
@@ -48,12 +48,12 @@ function App() {
   };
 
   const fetchPopularCitiesData = async () => {
-    const indianCities = [
-      'Delhi', 'Mumbai', 'Bangalore', 'Chennai', 'Kolkata', 
-      'Hyderabad', 'Pune', 'Ahmedabad', 'Jaipur', 'Lucknow'
+    const globalCities = [
+      'New York', 'London', 'Tokyo', 'Paris', 'Beijing',
+      'Delhi', 'Dubai', 'Singapore', 'Sydney', 'Cairo'
     ];
-    
-    const citiesPromises = indianCities.map(async (city) => {
+
+    const citiesPromises = globalCities.map(async (city) => {
       try {
         const data = await fetchCityAQI(city);
         return { name: city, ...data };
@@ -83,18 +83,18 @@ function App() {
   return (
     <div className="app">
       <Header />
-      
+
       {/* Floating Action Buttons */}
       <div className="floating-buttons">
-        <button 
-          className="float-btn health-btn"
+        <button
+          className="float-btn"
           onClick={() => setShowHealthTips(!showHealthTips)}
           title="Health Tips"
         >
           🏥
         </button>
-        <button 
-          className="float-btn cities-btn"
+        <button
+          className="float-btn"
           onClick={() => setShowCitiesList(!showCitiesList)}
           title="Cities List"
         >
@@ -103,51 +103,47 @@ function App() {
       </div>
 
       {/* Health Tips Side Panel */}
-      {showHealthTips && aqiData && (
-        <div className="side-panel health-panel">
-          <div className="panel-header">
-            <h3>🏥 Health Tips</h3>
-            <button 
-              className="close-btn"
-              onClick={() => setShowHealthTips(false)}
-            >
-              ✕
-            </button>
-          </div>
-          <div className="panel-content">
-            <HealthTips aqiValue={aqiData.aqi} />
-          </div>
+      <div className={`side-panel ${showHealthTips && aqiData ? 'open' : ''}`}>
+        <div className="panel-header">
+          <h3>🏥 Health Tips</h3>
+          <button
+            className="close-btn"
+            onClick={() => setShowHealthTips(false)}
+          >
+            ✕
+          </button>
         </div>
-      )}
+        <div className="panel-content">
+          {aqiData && <HealthTips aqiValue={aqiData.aqi} />}
+        </div>
+      </div>
 
       {/* Cities List Side Panel */}
-      {showCitiesList && (
-        <div className="side-panel cities-panel">
-          <div className="panel-header">
-            <h3>🏙️ Indian Cities</h3>
-            <button 
-              className="close-btn"
-              onClick={() => setShowCitiesList(false)}
-            >
-              ✕
-            </button>
-          </div>
-          <div className="panel-content">
-            <CityList 
-              cities={citiesData} 
-              onCityClick={(city) => {
-                handleCitySelect(city);
-                setShowCitiesList(false);
-              }}
-              selectedCity={selectedCity?.name}
-            />
-          </div>
+      <div className={`side-panel ${showCitiesList ? 'open' : ''}`}>
+        <div className="panel-header">
+          <h3>🏙️ Global Cities</h3>
+          <button
+            className="close-btn"
+            onClick={() => setShowCitiesList(false)}
+          >
+            ✕
+          </button>
         </div>
-      )}
+        <div className="panel-content">
+          <CityList
+            cities={citiesData}
+            onCityClick={(city) => {
+              handleCitySelect(city);
+              setShowCitiesList(false);
+            }}
+            selectedCity={selectedCity?.name}
+          />
+        </div>
+      </div>
 
       {/* Overlay for side panels */}
       {(showHealthTips || showCitiesList) && (
-        <div 
+        <div
           className="overlay"
           onClick={() => {
             setShowHealthTips(false);
@@ -157,28 +153,28 @@ function App() {
       )}
 
       <main className="main-content">
-        <div className="hero-section">
+        <section className="hero-section">
           <h1 className="hero-title">
-             VayuVeda - Your Air Quality Guardian
+            VayuVeda
           </h1>
           <p className="hero-subtitle">
-            Real-time air quality monitoring for cities with personalized health insights
+            Your premium Air Quality Guardian. Real-time monitoring with personalized health insights.
           </p>
-        </div>
+        </section>
 
-        <div className="search-section">
+        <section className="search-section">
           <CitySearch onCitySelect={handleCitySelect} />
-          
+
           {location && (
-            <button 
-              className="location-btn"
+            <button
+              className="btn location-btn"
               onClick={handleLocationAQI}
               disabled={loading || locationLoading}
             >
-               Use My Location
+              📍 Use Location
             </button>
           )}
-        </div>
+        </section>
 
         {(loading || locationLoading) && (
           <div className="loading-spinner">
@@ -189,27 +185,15 @@ function App() {
 
         {aqiData && (
           <div className="aqi-dashboard">
-            <div className="dashboard-center">
-              <div className="aqi-section">
-                <h2>{selectedCity?.name} Air Quality</h2>
-                <AQIMeter aqiValue={aqiData.aqi} />
-              </div>
-            </div>
+            <AQIMeter aqiValue={aqiData.aqi} />
           </div>
         )}
       </main>
 
-      <ToastContainer 
-        position="top-right"
+      <ToastContainer
+        position="bottom-right"
         autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
+        theme="dark"
       />
     </div>
   );

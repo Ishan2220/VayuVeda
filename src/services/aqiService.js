@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-// Using World Air Quality Index API - you'll need to get a free token from https://aqicn.org/data-platform/token/
-const WAQI_TOKEN = 'e30c517d41e3bed22e20a60ecb706391cec1c822'; // Get from https://aqicn.org/data-platform/token/
+// Using World Air Quality Index API
+const WAQI_TOKEN = 'e30c517d41e3bed22e20a60ecb706391cec1c822';
 const BASE_URL = 'https://api.waqi.info';
 
 export const fetchAQIData = async (lat, lon) => {
@@ -9,7 +9,7 @@ export const fetchAQIData = async (lat, lon) => {
     const response = await axios.get(
       `${BASE_URL}/feed/geo:${lat};${lon}/?token=${WAQI_TOKEN}`
     );
-    
+
     if (response.data.status === 'ok') {
       return {
         aqi: response.data.data.aqi,
@@ -29,7 +29,7 @@ export const fetchCityAQI = async (cityName) => {
     const response = await axios.get(
       `${BASE_URL}/feed/${cityName}/?token=${WAQI_TOKEN}`
     );
-    
+
     if (response.data.status === 'ok') {
       return {
         aqi: response.data.data.aqi,
@@ -41,5 +41,22 @@ export const fetchCityAQI = async (cityName) => {
   } catch (error) {
     console.error(`Error fetching AQI data for ${cityName}:`, error);
     throw error;
+  }
+};
+
+export const searchCities = async (keyword) => {
+  if (!keyword || keyword.length < 2) return [];
+  try {
+    const response = await axios.get(
+      `${BASE_URL}/search/?token=${WAQI_TOKEN}&keyword=${keyword}`
+    );
+
+    if (response.data.status === 'ok') {
+      return response.data.data;
+    }
+    return [];
+  } catch (error) {
+    console.error(`Error searching for cities with keyword ${keyword}:`, error);
+    return [];
   }
 };
